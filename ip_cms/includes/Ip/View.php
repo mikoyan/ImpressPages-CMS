@@ -27,7 +27,11 @@ class View{
     const DOCTYPE_HTML4_TRANSITIONAL = 5;
     const DOCTYPE_HTML4_FRAMESET = 6;
     const DOCTYPE_HTML5 = 7;
-    
+
+    const BLOCK_TYPE_DEFAULT = 0;
+    const BLOCK_TYPE_STATIC = 1;
+    const BLOCK_TYPE_LANGUAGE = 2;
+
         
     private $file;
     private $data;
@@ -308,10 +312,15 @@ class View{
     }
 
 
-    public function generateBlock($blockName, $static = false)
+    /**
+     * @param $blockName
+     * @param int $TYPE block type. \Ip\View::BLOCK_TYPE_DEFAULT - unique widgets on each page. \Ip\View::BLOCK_TYPE_STATIC - the same widgets on all pages. \Ip\View::BLOCK_TYPE_LANGUAGE - unique widgets for each website
+     * @return string generated block HTML
+     */
+    public function generateBlock($blockName, $type = \Ip\View::BLOCK_TYPE_DEFAULT)
     {
-        global $site;
-        return $site->generateBlock($blockName, $static);
+        $site = \Ip\ServiceLocator::getSite();
+        return $site->generateBlock($blockName, $type);
     }
 
     public function generateManagedLogo($cssClass = null)

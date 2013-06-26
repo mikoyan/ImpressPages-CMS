@@ -51,7 +51,7 @@
                 ?>
             </nav>
             <aside>
-                <?php echo $this->generateBlock('side', true); ?>
+                <?php echo $this->generateBlock('side', \Ip\View::BLOCK_TYPE_LANGUAGE); ?>
             </aside>
         </div>
         <div class="clear"></div>

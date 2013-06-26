@@ -17,11 +17,10 @@ class Model{
     const DEFAULT_LAYOUT = 'default';
     const WIDGET_DIR = 'widget';
 
-    public static function generateBlock($blockName, $revisionId, $managementState) {
-        global $site;
-        $widgets = self::getBlockWidgetRecords($blockName, $revisionId);
+    public static function generateBlock($blockName, $revisionId, $languageId, $managementState) {
+        $widgets = self::getBlockWidgetRecords($blockName, $revisionId, $languageId);
         $widgetsHtml = array();
-        foreach ($widgets as $key => $widget) {
+        foreach ($widgets as $widget) {
             try {
                 $widgetsHtml[] = self::_generateWidgetPreview($widget, $managementState);
             } catch (Exception $e) {
@@ -168,32 +167,38 @@ class Model{
     }
 
 
-    public static function getBlockWidgetRecords($blockName, $revisionId){
+    public static function getBlockWidgetRecords($blockName, $revisionId, $languageId){
+
+
+
+        $dbh = \Ip\Db::getConnection();
         $sql = "
-            SELECT * 
+            SELECT *
             FROM
                 `".DB_PREF."m_content_management_widget_instance` i,
                 `".DB_PREF."m_content_management_widget` w
             WHERE
                 i.deleted is NULL AND
                 i.widgetId = w.widgetId AND
-                i.blockName = '".mysql_real_escape_string($blockName)."' AND
-                i.revisionId = ".(int)$revisionId."
-            ORDER BY `position` ASC
-        ";
-        $rs = mysql_query($sql);
-        if (!$rs){
-            throw new Exception('Can\'t get widgets '.$sql.' '.mysql_error(), Exception::DB);
+                i.blockName = :blockName AND
+                (i.revisionId = :revisionId OR i.revisionId IS NULL) AND
+                (i.languageId = :languageId OR i.languageId IS NULL)
+            ORDER BY
+                `position` ASC ";
+
+
+
+        $q = $dbh->prepare($sql);
+        $q->bindParam(':blockName', $blockName);
+        $q->bindValue(':revisionId', $revisionId);
+        $q->bindValue(':languageId', $languageId);
+        $q->execute();
+        $answer = $q->fetchAll();
+        foreach($answer as &$record) {
+            $record['data'] = json_decode($record['data'], true);
         }
-
-        $answer = array();
-
-        while ($lock = mysql_fetch_assoc($rs)) {
-            $lock['data'] = json_decode($lock['data'], true);
-            $answer[] = $lock;
-        }
-
         return $answer;
+
     }
 
 

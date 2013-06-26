@@ -32,6 +32,39 @@ class Script extends \IpUpdate\Library\Migration\General{
 
 
         $this->allowNullInWidgetInstances();
+        $this->addLanguageId();
+    }
+
+    private function addLanguageId()
+    {
+        $found = false;
+
+        //check if languageId already exists
+        $sql = "
+        SHOW COLUMNS FROM ".$this->dbPref."m_content_management_widget_instance LIKE  'languageId'
+        ";
+        $rs = mysql_query($sql, $this->conn);
+        if($rs){
+            $lock = mysql_fetch_assoc($rs);
+            if ($lock) {
+                //languageId already exists
+                return;
+            }
+        } else {
+            throw new \IpUpdate\Library\UpdateException($sql." ".mysql_error(), \IpUpdate\Library\UpdateException::SQL);
+            return false;
+        }
+
+        //add languageId
+        $sql = "
+         ALTER TABLE  `".$this->dbPref."m_content_management_widget_instance` ADD  `languageId` INT NULL AFTER  `blockName`
+        ";
+        $rs = mysql_query($sql, $this->conn);
+        if(!$rs){
+            throw new \IpUpdate\Library\UpdateException($sql." ".mysql_error(), \IpUpdate\Library\UpdateException::SQL);
+            return false;
+        }
+
     }
 
     private function allowNullInWidgetInstances()
@@ -41,6 +74,20 @@ class Script extends \IpUpdate\Library\Migration\General{
              `".$this->dbPref."m_content_management_widget_instance`
          CHANGE
              `revisionId`  `revisionId` int(11) NULL
+        ";
+        $rs = mysql_query($sql, $this->conn);
+        if(!$rs){
+            throw new \IpUpdate\Library\UpdateException($sql." ".mysql_error(), \IpUpdate\Library\UpdateException::SQL);
+            return false;
+        }
+
+        $sql = "
+         UPDATE
+             `".$this->dbPref."m_content_management_widget_instance`
+         SET
+             `revisionId` = null
+         WHERE
+             `revisionId` = 0
         ";
         $rs = mysql_query($sql, $this->conn);
         if(!$rs){

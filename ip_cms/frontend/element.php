@@ -99,7 +99,7 @@ class Element{
         $site = \Ip\ServiceLocator::getSite();
         $revision = $site->getRevision();
         if ($revision) {
-            return \Modules\standard\content_management\Model::generateBlock('main', $revision['revisionId'], $site->managementState());
+            return \Modules\standard\content_management\Model::generateBlock('main', $revision['revisionId'], $site->getCurrentLanguage()->getId(), $site->managementState());
         } else {
             return '';
         }

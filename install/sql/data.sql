@@ -87,18 +87,18 @@ INSERT INTO `ip_cms_m_content_management_widget` (`widgetId`, `name`, `layout`, 
  
 -- Dumping data for table--
 
-INSERT INTO `ip_cms_m_content_management_widget_instance` (`instanceId`, `revisionId`, `widgetId`, `position`, `blockName`, `visible`, `created`, `deleted`) VALUES
-(1974, 89, 1, 0, 'main', 1, 1323984460, NULL),
-(1975, 89, 2, 40, 'main', 1, 1323984478, 1323984484),
-(1976, 89, 3, 40, 'main', 1, 1323984488, 1323984491),
-(1977, 90, 1, 0, 'main', 1, 1323984460, NULL),
-(1978, 90, 4, 40, 'main', 1, 1323984498, NULL),
-(1979, 90, 5, 0, 'side', 1, 1323984539, NULL),
-(1980, 90, 6, 40, 'side', 1, 1323984550, NULL),
-(1981, 91, 1, 0, 'main', 1, 1323984460, NULL),
-(1982, 91, 5, 0, 'side', 1, 1323984539, NULL),
-(1983, 91, 4, 40, 'main', 1, 1323984498, NULL),
-(1984, 91, 6, 40, 'side', 1, 1323984550, NULL);
+INSERT INTO `ip_cms_m_content_management_widget_instance` (`instanceId`, `revisionId`, `widgetId`, `position`, `blockName`, `languageId`, `visible`, `created`, `deleted`) VALUES
+(1974, 89, 1, 0, 'main', null, 1, 1323984460, NULL),
+(1975, 89, 2, 40, 'main', null, 1, 1323984478, 1323984484),
+(1976, 89, 3, 40, 'main', null, 1, 1323984488, 1323984491),
+(1977, 90, 1, 0, 'main', null, 1, 1323984460, NULL),
+(1978, 90, 4, 40, 'main', null, 1, 1323984498, NULL),
+(1979, 90, 5, 0, 'side', null, 1, 1323984539, NULL),
+(1980, 90, 6, 40, 'side', null, 1, 1323984550, NULL),
+(1981, 91, 1, 0, 'main', null, 1, 1323984460, NULL),
+(1982, 91, 5, 0, 'side', null, 1, 1323984539, NULL),
+(1983, 91, 4, 40, 'main', null, 1, 1323984498, NULL),
+(1984, 91, 6, 40, 'side', null, 1, 1323984550, NULL);
 
 -- Dumping data for table--
 

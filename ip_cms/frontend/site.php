@@ -169,7 +169,7 @@ class Site{
 
     /**
      *
-     * @return Language - current language
+     * @return \Frontend\Language - current language
      *
      */
     public function getCurrentLanguage(){
@@ -1228,14 +1228,20 @@ class Site{
     }
 
 
-    public function generateBlock($blockName, $static = false) {
-        global $dispatcher;
-        global $site;
+    /**
+     * @internal
+     * @param $blockName
+     * @param bool $static
+     * @return string
+     */
+    public function generateBlock($blockName, $type = \Ip\View::BLOCK_TYPE_DEFAULT) {
+        $dispatcher = \Ip\ServiceLocator::getDispatcher();
         $data = array (
-            'blockName' => $blockName
+            'blockName' => $blockName,
+            'type' => $type
         );
 
-        $event = new \Ip\Event($site, 'site.generateBlock', $data);
+        $event = new \Ip\Event($this, 'site.generateBlock', $data);
 
         $processed = $dispatcher->notifyUntil($event);
 
@@ -1244,22 +1250,34 @@ class Site{
         } else {
             require_once(BASE_DIR.MODULE_DIR.'standard/content_management/model.php');
 
-            if ($static) {
-                $revisionId = null;
-            } else {
-                $revision = $this->getRevision();
-                if ($revision) {
-                $revisionId = $revision['revisionId'];
-                } else {
-                    return '';
-                }
+            switch($type) {
+                default:
+                case \Ip\View::BLOCK_TYPE_DEFAULT:
+                    $revision = $this->getRevision();
+                    if ($revision) {
+                        $revisionId = $revision['revisionId'];
+                    } else {
+                        return '';
+                    }
+
+                    $languageId = null;
+                    break;
+                case \Ip\View::BLOCK_TYPE_LANGUAGE:
+                    $revisionId = null;
+                    $languageId = $this->getCurrentLanguage()->getId();
+                    break;
+                case \Ip\View::BLOCK_TYPE_STATIC:
+                    $languageId = null;
+                    $revisionId = null;
+                    break;
             }
 
-            if ($blockName == 'main' && $site->getCurrentElement()) {
-                return $site->getCurrentElement()->generateContent();
+
+            if ($blockName == 'main' && $this->getCurrentElement()) {
+                return $this->getCurrentElement()->generateContent();
             }
 
-            return \Modules\standard\content_management\Model::generateBlock($blockName, $revisionId, $this->managementState());
+            return \Modules\standard\content_management\Model::generateBlock($blockName, $revisionId, $languageId, $this->managementState());
 
         }
     }
